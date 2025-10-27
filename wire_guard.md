@@ -1,0 +1,54 @@
+Install wireguard
+```
+rm -f /var/opkg-lists/*
+opkg update
+opkg install kmod-wireguard
+opkg install wireguard-tools resolveip
+opkg install luci-proto-wireguard
+```
+Reeboot router
+Add interface
+```
+# ===  wg0
+uci set network.wg0='interface'
+uci set network.wg0.proto='wireguard'
+uci add_list network.wg0.addresses='10.10.10.1/24'
+uci set network.wg0.listen_port='51820'
+uci set network.wg0.private_key='<SERVER_PRIVATE_KEY>'
+
+# === peer (your client)
+uci add network wireguard_wg0
+uci set network.@wireguard_wg0[-1].description='client1'
+uci set network.@wireguard_wg0[-1].public_key='<CLIENT_PUBLIC_KEY>'
+uci add_list network.@wireguard_wg0[-1].allowed_ips='10.10.10.2/32'
+
+uci commit network
+/etc/init.d/network restart
+```
+Setup firewall
+
+```
+
+# === Firewall ===
+uci add firewall zone
+uci set firewall.@zone[-1].name='vpn'
+uci set firewall.@zone[-1].input='ACCEPT'
+uci set firewall.@zone[-1].output='ACCEPT'
+uci set firewall.@zone[-1].forward='ACCEPT'
+uci set firewall.@zone[-1].masq='1'
+uci add_list firewall.@zone[-1].network='wg0'
+
+uci add firewall forwarding
+uci set firewall.@forwarding[-1].src='vpn'
+uci set firewall.@forwarding[-1].dest='lan'
+
+uci add firewall rule
+uci set firewall.@rule[-1].name='Allow-WireGuard-UDP'
+uci set firewall.@rule[-1].src='wan'
+uci set firewall.@rule[-1].proto='udp'
+uci set firewall.@rule[-1].dest_port='51820'
+uci set firewall.@rule[-1].target='ACCEPT'
+
+uci commit firewall
+/etc/init.d/firewall restart
+```
