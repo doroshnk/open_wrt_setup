@@ -104,4 +104,7 @@ config service 'duckdns_home'
     option force_interval '12'
     option force_unit 'hours'
 ```
-Then restar `/etc/init.d/ddns restart` and check `logread -e ddns` or `/usr/lib/ddns/dynamic_dns_updater.sh duckdns_home`
+Then restar 
+`/etc/init.d/ddns enable
+/etc/init.d/ddns restart`
+and check `logread -e ddns` or `/usr/lib/ddns/dynamic_dns_updater.sh duckdns_home`
