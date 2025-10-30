@@ -72,3 +72,19 @@ uci set firewall.@rule[-1].target='ACCEPT'
 uci commit firewall
 /etc/init.d/firewall restart
 ```
+Setup WG client
+
+Create conf file for client in `sudo vim /etc/wireguard/r36.conf` and enter
+```
+[Interface]
+PrivateKey = <CLIENT_PRIVATE_KEY>
+Address = 10.10.10.2/32
+DNS = 10.10.10.1
+
+[Peer]
+PublicKey = <SERVER_PUBLIC_KEY>
+Endpoint = <IP_or_DDNS_of_router>:51820
+AllowedIPs = 10.10.10.0/24, 192.168.36.0/24
+PersistentKeepalive = 25
+```
+Switch on VPN connect `sudo wg-quick up r36` switch off `sudo wg-quick down r36`
