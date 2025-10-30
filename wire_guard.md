@@ -7,7 +7,27 @@ opkg install wireguard-tools resolveip
 opkg install luci-proto-wireguard
 ```
 Reeboot router
-Add interface
+
+WG tools
+
+```
+#Generate Server Private Key.
+wg genkey > server_privatekey
+
+#Generate Server Public Key from Private Key:
+wg pubkey < server_privatekey > server_publickey
+
+#Generate Client Private Key.
+wg genkey > client_privatekey
+
+#Generate Client Public Key from Private Key:
+wg pubkey < client_privatekey > client_publickey
+
+#or by one line
+wg genkey | tee private.key | wg pubkey > public.key
+```
+
+Add WG interface
 ```
 # ===  wg0
 uci set network.wg0='interface'
