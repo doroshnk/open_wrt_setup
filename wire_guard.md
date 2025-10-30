@@ -88,3 +88,20 @@ AllowedIPs = 10.10.10.0/24, 192.168.36.0/24
 PersistentKeepalive = 25
 ```
 Switch on VPN connect `sudo wg-quick up r36` switch off `sudo wg-quick down r36`
+
+Set up duckdns. Open `vim /etc/config/ddns` and add
+```
+config service 'duckdns_home'
+    option service_name 'duckdns.org'
+    option domain 'home1.duckdns.org'
+    option username 'your_token_here'
+    option use_https '1'
+    option ip_source 'network'
+    option ip_network 'wan'
+    option interface 'wan'
+    option check_interval '1'
+    option check_unit 'minutes'
+    option force_interval '12'
+    option force_unit 'hours'
+```
+Then restar `/etc/init.d/ddns restart` and check `logread -e ddns` or `/usr/lib/ddns/dynamic_dns_updater.sh duckdns_home`
