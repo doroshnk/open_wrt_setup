@@ -89,23 +89,40 @@ PersistentKeepalive = 25
 ```
 Switch on VPN connect `sudo wg-quick up r36` switch off `sudo wg-quick down r36`
 
-Set up duckdns. Open `vim /etc/config/ddns` comment other config and add
+Set up duckdns. Read https://www.duckdns.org/install.jsp for more detail
+
+Install
 ```
-config service 'duckdns_home'
-        option enabled '1'
-        option service_name 'duckdns.org'
-        option domain 'mydns.duckdns.org'
-        option username 'mydns'
-        option password 'your_token'
-        option use_https '0'
-        option ip_source 'network'
-        option ip_network 'wan'
-        option interface 'wan'
-        option check_interval '1'
-        option check_unit 'minutes'
-        option force_interval '12'
-        option force_unit 'hours'
-        option lookup_host 'mydns.duckdns.org'
+opkg update
+opkg install ddns-scripts
+```
+Open `vim /etc/config/ddns` comment other config and add
+```
+config service "duckdns"
+        option enabled          "1"
+        option domain           "exampledomain.duckdns.org"
+        option username         "exampledomain"
+        option password         "a7c4d0ad-114e-40ef-ba1d-d217904a50f2"
+        option ip_source        "network"
+        option ip_network       "wan"
+        option force_interval   "72"
+        option force_unit       "hours"
+        option check_interval   "10"
+        option check_unit       "minutes"
+        #option ip_source       "interface"
+        #option ip_interface    "eth0.1"
+        #option ip_source       "web"
+        #option ip_url          "http://ipv4.wtfismyip.com/text"
+        option update_url       "http://www.duckdns.org/update?domains=[USERNAME]&token=[PASSWORD]&ip=[IP]"
+        #option use_https       "1"
+        #option cacert          "/etc/ssl/certs/cacert.pem"
+```
+now start it up
+```
+sh
+. /usr/lib/ddns/dynamic_dns_functions.sh # note the leading period
+start_daemon_for_all_ddns_sections "wan"
+exit
 ```
 Then restar 
 ```
