@@ -72,6 +72,20 @@ uci set firewall.@rule[-1].target='ACCEPT'
 uci commit firewall
 /etc/init.d/firewall restart
 ```
+if you need 'clasic' VPN(all request through vpn)
+```
+# enable NAT (masq) in vpn zone
+uci set firewall.@zone[@name='vpn'].masq='1'
+
+# add forwarding from vpn in wan
+uci add firewall forwarding
+uci set firewall.@forwarding[-1].src='vpn'
+uci set firewall.@forwarding[-1].dest='wan'
+
+# apply changing
+uci commit firewall
+/etc/init.d/firewall restart
+```
 Setup WG client
 
 Create conf file for client in `sudo vim /etc/wireguard/r36.conf` and enter
@@ -85,6 +99,7 @@ DNS = 10.10.10.1
 PublicKey = <SERVER_PUBLIC_KEY>
 Endpoint = <IP_or_DDNS_of_router>:51820
 AllowedIPs = 10.10.10.0/24, 192.168.36.0/24
+#AllowedIPs = 0.0.0.0/0, ::/0 # all request through vpn, dont forgot comment above line
 PersistentKeepalive = 25
 ```
 Switch on VPN connect `sudo wg-quick up r36` switch off `sudo wg-quick down r36`
