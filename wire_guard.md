@@ -75,7 +75,7 @@ uci commit firewall
 if you need 'clasic' VPN(all request through vpn)
 ```
 # enable NAT (masq) in vpn zone
-uci set firewall.@zone[@name='vpn'].masq='1'
+uci set firewall.@zone[2].masq='1'
 
 # add forwarding from vpn in wan
 uci add firewall forwarding
